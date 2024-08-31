@@ -8,6 +8,8 @@ import { useCallback, useEffect } from "react";
 import { useChainStore } from "./chain";
 import { useWalletStore } from "./wallet";
 
+import { Field } from "o1js";
+
 export interface BalancesState {
   loading: boolean;
   balances: {
@@ -52,8 +54,9 @@ export const useBalancesStore = create<
       const balances = client.runtime.resolve("Balances");
       const sender = PublicKey.fromBase58(address);
 
+      const secret = Field(44);
       const tx = await client.transaction(sender, async () => {
-        await balances.addBalance(tokenId, sender, Balance.from(1000));
+        await balances.addBalance(tokenId, sender, Balance.from(1000), secret);
       });
 
       await tx.sign();
